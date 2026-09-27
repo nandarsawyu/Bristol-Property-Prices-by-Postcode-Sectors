@@ -1,6 +1,5 @@
 # Predicting Average Property Prices in Bristol by Postcode Sectors
 
-**Student ID:** 24071045 | **Supervisor:** Dalila Khettaf  
 **MSc Data Science Project** – University of the West of England (UWE)  
 **Interactive Artifact:** `bristol_property_market_map.html`
 
