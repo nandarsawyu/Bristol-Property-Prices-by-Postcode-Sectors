@@ -1,62 +1,85 @@
 # Predicting Average Property Prices in Bristol by Postcode Sectors
 
-**MSc Data Science Project** – University of the West of England (UWE)  
-**Interactive Artifact:** `bristol_property_market_map.html`
-
----
+**MSc Data Science Project – University of the West of England (UWE Bristol)**
 
 ## Project Overview
-This project establishes an end-to-end data science framework to analyze, model, and predict average property prices across Bristol at the **Postcode Sector** level (e.g., `BS1 6`, `BS16 7`). By engineering a pipeline that fuses transaction records, spatial grids, and municipal crime data, this study uncovers localized neighborhood dynamics and deploys predictive machine learning models.
 
-### Key Objectives:
-* **Integrate & Clean:** Aggregate open-access datasets spanning property transactions, coordinates, and crime indexes.
-* **Geospatial Feature Engineering:** Transform British National Grid coordinates (`easting`/`northing`) into standard GPS Latitude/Longitude.
-* **Predictive Modeling:** Train and optimize machine learning regressors to forecast property values.
-* **Geospatial Deployment:** Build a responsive, interactive HTML map featuring transaction heatmaps and collapsible data clusters.
+This project develops a data-driven framework to analyse and predict residential property prices across Bristol at the **postcode-sector level**. It integrates UK Land Registry property transactions, Ordnance Survey geographic data, and ONS demographic data to investigate spatial and temporal patterns in the Bristol housing market.
 
----
+## Key Objectives
 
-## Data Sources & Pipeline Architecture
-The analytical pipeline blends three primary open-government data streams:
-1. **UK Land Registry (`bristol_properties_monthly.csv`):** Historical sales data tracking purchase price, property type, and transaction dates.
-2. **Ordnance Survey Code-Point Open (`bs_cleaned.csv`):** Master lookup mapping alphanumeric postcodes to spatial grid coordinates.
-3. **UK Open Crime Data (`bristol_master_crimes.csv`):** Monthly municipal offense records used to evaluate neighborhood safety impacts.
+- Clean and integrate property, geographic, and demographic datasets.
+- Analyse house-price distributions, trends, and spatial patterns.
+- Engineer postcode-level geographic and transaction features.
+- Develop and compare regression and machine-learning models.
+- Evaluate model performance using MAE, RMSE, and R².
+- Visualise predicted prices and spatial clusters using an interactive Folium map.
 
----
+## Data Sources
 
-## Core Insights (EDA)
-* **Price Skewness:** Bristol property valuations display a prominent right-skewed distribution, driven by high-value outliers.
-* **Market Seasonality:** A positive correlation ($r = 0.314$) exists between sales volumes and crime occurrences, peaking systematically during summer cycles.
-* **Safety & Valuation Link:** An inverse correlation ($r = -0.385$) confirms that macro property valuations adjust downwards in sectors experiencing high localized crime densities.
+- **UK Land Registry Price Paid Data** – property transaction prices and characteristics.
+- **Ordnance Survey Code-Point Open** – postcode geographic coordinates.
+- **Office for National Statistics (ONS)** – population and demographic information.
 
----
+## Key Findings
 
-## Machine Learning & Performance
-The dataset was split into an **80% Training / 20% Testing** framework. Missing structures were resolved inside an isolated pipeline using median imputation and standard scaling to prevent data leakage. 
+- Bristol property prices show a strong **right-skewed distribution**.
+- Average prices generally increased between **2015 and 2024**, with a notable change around 2021.
+- Property prices exhibit substantial **spatial variation**, with higher-priced areas concentrated around central Bristol.
+- Population and demographic variables have relatively weak individual relationships with property prices.
+- Transaction volume (`n_sales`) was the most influential feature in the final model.
 
-An optimized **Random Forest Regressor** ensemble was deployed to map complex geographic and spatial-temporal interactions, outperforming traditional linear models.
+## Machine Learning
 
-### Test Performance Matrix:
-| Metric | Model Score |
-| :--- | :--- |
-| **Mean Absolute Error (MAE)** | £42,150.20 |
-| **Root Mean Squared Error (RMSE)** | £61,845.50 |
-| **Coefficient of Determination ($R^2$)** | **0.7845** |
+Several models were evaluated, including Linear Regression, Ridge, Lasso, HistGradientBoosting, and Random Forest.
 
-*Interpretation: The model successfully accounts for **78.45% of the total variance** in Bristol's property valuations based on spatial-temporal inputs.*
+The final **RandomForest_fast** model achieved:
 
----
+| Metric | Result |
+|---|---:|
+| MAE | £126,525 |
+| RMSE | £376,403 |
+| R² | -1.04 |
 
-## Interactive Geospatial Dashboard
-The project concludes with an interactive deployment built via **Folium**. It renders directly inside any standard web browser by opening `bristol_property_market_map.html`.
+The results demonstrate the challenges of predicting postcode-sector property prices using a limited set of demographic, spatial, and transaction features.
+
+## Interactive Map
+
+A **Folium-based interactive map** was developed to visualise postcode-sector results across Bristol. The map includes:
+
+- Postcode-sector locations
+- Spatial cluster colours
+- Transaction-volume-based marker sizes
+- Median and predicted prices
+- Number of transactions
+- Interactive popups and tooltips
 
 ### Dynamic Map Layers:
 * **Base Map Layer:** Centered directly over Bristol City Centre `[51.4545, -2.5879]`.
-* **Sales Volume Heatmap:** Visualizes live real estate activity density gradients across the city.
-* **Collapsible Marker Clusters:** Interactive map pins color-coded by market tier:
-  * 🟣 **Purple:** Premium sectors ($>£450,000$)
-  * 🔵/🟢 **Blue & Green:** Mid-market sectors ($£200,000 - £450,000$)
-  * 🟠 **Orange:** Entry-level affordable sectors ($<£200,000$)
-* **Custom Info Popups:** Clicking a marker renders a clean HTML card breaking down the area's **Sector ID, Average Property Price, Total Transactions,** and **Total Crime Count**.
+* **Postcode-Sector Markers:** Each postcode sector is represented by a coloured circle. Marker size reflects the number of property transactions (`n_sales`).
+* **Cluster Colours:** Colours represent the **spatial cluster assigned to each postcode sector**, rather than fixed affordable or premium price categories:
+  * 🔴 **Red:** Cluster 0
+  * 🔵 **Blue:** Cluster 1
+  * 🟢 **Green:** Cluster 2
+  * 🟣 **Purple:** Cluster 3
+  * 🟠 **Orange:** Cluster 4
+  * 🩷 **Pink:** Cluster 5
+  * 🔷 **Cadet Blue:** Cluster 6
+  * 🔴 **Dark Red:** Cluster 7
+  * 🔵 **Dark Blue:** Cluster 8
+* **Custom Info Popups:** Clicking a marker displays the **Postcode Sector, Cluster, Median Property Price, Predicted Property Price,** and **Number of Sales**.
+* **Interactive Tooltips:** Hovering over a marker displays the corresponding postcode sector.
 
----
+The colour scheme is used to distinguish the different **spatial clusters identified during the analysis**. It should not be interpreted as a direct ranking of property affordability or market value; the predicted and median prices are provided separately in the interactive popups.
+
+## Technologies
+
+`Python` · `Pandas` · `NumPy` · `Scikit-learn` · `Matplotlib` · `Seaborn` · `Folium` · `Google Colab`
+
+## Limitations & Future Work
+
+The model is limited by the absence of detailed housing characteristics, income indicators, amenity data, and explicit spatial modelling. Future work could incorporate richer property and neighbourhood features, spatial machine-learning methods, and time-aware modelling approaches.
+
+## Project
+
+**GitHub:** https://github.com/s2-nandar/Predicting-Average-Property-Prices-in-Bristol-by-Postcode-Sectors.git
